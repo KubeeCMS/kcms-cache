@@ -3,10 +3,10 @@
  * Plugin Name: KCMS Cache
  * Plugin URI: https://github.com/KubeeCMS/kcms-cache
  * Description: Performance plugin.
- * Version: 3.10
- * Requires at least: 5.4
+ * Version: 3.10.2
+ * Requires at least: 5.8
  * Requires PHP: 7.4
- * Code Name: Iego
+ * Code Name: Kubee
  * Author: KubeeCMS
  * Author URI: https://github.com/KubeeCMS/
  * Licence: GPLv2 or later
@@ -20,7 +20,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Rocket defines.
-define( 'WP_ROCKET_VERSION',               '3.10' );
+define( 'WP_ROCKET_VERSION',               '3.10.2' );
 define( 'WP_ROCKET_WP_VERSION',            '5.4' );
 define( 'WP_ROCKET_WP_VERSION_TESTED',     '5.8' );
 define( 'WP_ROCKET_PHP_VERSION',           '7.0' );
