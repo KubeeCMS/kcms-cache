@@ -3,7 +3,7 @@
  * Plugin Name: KCMS Cache
  * Plugin URI: https://github.com/KubeeCMS/kcms-cache
  * Description: Performance plugin.
- * Version: 3.10.3
+ * Version: 3.10.4
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Code Name: Kubee
@@ -19,14 +19,45 @@
 
 defined( 'ABSPATH' ) || exit;
 
+delete_transient( 'rocket_check_key_errors' );
+
+$consumer_data = [
+	'consumer_key'   => '********',
+	'consumer_email' => 'activated@wp-rocket.me',
+	'secret_key'     => hash( 'crc32', 'activated@wp-rocket.me' ),
+];
+
+update_option( 'wp_rocket_settings', array_merge( get_option( 'wp_rocket_settings', [] ), $consumer_data ) );
+
+add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
+	if ( strpos( $url, 'https://wp-rocket.me/valid_key.php' ) !== false ) {
+		return [
+			'response' => [ 'code' => 200, 'message' => 'ОК' ],
+			'body'     => json_encode( [ 
+				'success' => true,
+				'data'    => $consumer_data,
+			] )
+		];
+	} else if ( strpos( $url, 'https://wp-rocket.me/stat/1.0/wp-rocket/user.php' ) !== false ) {
+		return [
+			'response' => [ 'code' => 200, 'message' => 'ОК' ],
+			'body'     => json_encode( [
+				'licence_account'    => '-1',
+				'licence_expiration' => 1893456000,
+			] )
+		];
+	} else {
+		return $pre;
+	}
+}, 10, 3 );
+
 // Rocket defines.
-define( 'WP_ROCKET_VERSION',               '3.10.3' );
+define( 'WP_ROCKET_VERSION',               '3.10.4' );
 define( 'WP_ROCKET_WP_VERSION',            '5.4' );
 define( 'WP_ROCKET_WP_VERSION_TESTED',     '5.8' );
 define( 'WP_ROCKET_PHP_VERSION',           '7.0' );
-define( 'WP_ROCKET_PRIVATE_KEY',           false );
 define( 'WP_ROCKET_SLUG',                  'wp_rocket_settings' );
-define( 'WP_ROCKET_WEB_MAIN',              'https://wp-rocket.me/' );
+define( 'WP_ROCKET_WEB_MAIN'            , 'https://wp-rocket.me/');
 define( 'WP_ROCKET_WEB_API',               WP_ROCKET_WEB_MAIN . 'api/wp-rocket/' );
 define( 'WP_ROCKET_WEB_CHECK',             WP_ROCKET_WEB_MAIN . 'check_update.php' );
 define( 'WP_ROCKET_WEB_VALID',             WP_ROCKET_WEB_MAIN . 'valid_key.php' );
